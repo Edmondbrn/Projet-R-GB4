@@ -1,4 +1,5 @@
 getwd()
+setwd("C:/Users/Edmond/OneDrive - Université Côte d'Azur/Documents/Cours/Cours Polytech/GB4/Stat/Projet-R-GB4")
 data = read.csv("LC-Adductomics.csv")
 data
 View(data)
@@ -71,12 +72,17 @@ arrows(bp, moyennes_par_etat, bp, moyennes_par_etat + ecart_types_par_etat, angl
 
 
 
+mymodel = glm(data$case ~data$Albumin.adduct.of.Nacetylcysteine)
+summary(mymodel)
 
+mymodel2 = glm(data$case ~ data$Albumin.adduct.of.CysGly)
+summary(mymodel2)
 
+mymodel3 = glm(data$case ~ data$Albumin.adduct.of.sulfonic.acid)
+summary(mymodel3)
 
-
-
-
+mymodel4 = glm(data$case ~ data$smoking_status)
+summary(mymodel4)
 
 
 
