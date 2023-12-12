@@ -1,5 +1,5 @@
 getwd()
-setwd("C:/Users/Edmond/OneDrive - Université Côte d'Azur/Documents/Cours/Cours Polytech/GB4/Stat/Projet-R-GB4")
+setwd("C:/Users/33695/OneDrive/Documents/Cours Polytech/4eme annee/S1/R-studio/Projet de groupe/Projet-R-GB4")
 data = read.csv("LC-Adductomics.csv")
 data
 View(data)
@@ -26,11 +26,16 @@ table(data$smoking_status)
 # 67 fumeur actuel, 64 anciens fumeurs et 66 never
 
 table(data$case)
-# 101 Sains et 96 cancéreux
+# 101 Sains et 96 Cancéreux 
 
 table(data$case, data$gender)
 table(data$case, data$smoking_status)
 chisq.test(table(data$case, data$smoking_status))
+#p-value = 3.058e-07 donc on rejette H0 et accepte H1 = différence de proportion (current a beaucoup de cancer et never pas beacoup)
+
+table(data$case,data$centre)
+chisq.test(table(data$case, data$centre))
+#p-value = 0.5459 soit <0,05 donc pas de différences significatives entre les centres)
 
 hist(data$age.recr)
 qqnorm(data$age.recr)
@@ -59,6 +64,33 @@ barplot(height = moyennes_par_etat, col = "skyblue", main = "Non lié" )
 kruskal.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
 dunn.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
 
+
+moyennes_par_etat = tapply(data$Albumin.adduct.of.Nacetylcysteine, data$case, mean)
+barplot(height = moyennes_par_etat, col = "skyblue", main = "Nacetylcystéine" )
+
+moyennes_par_etat = tapply(data$Albumin.adduct.of.CysGly, data$case, mean)
+barplot(height = moyennes_par_etat, col = "skyblue", main = "CysGly" )
+
+moyennes_par_etat = tapply(data$Albumin.adduct.of.sulfonic.acid, data$case, mean)
+barplot(height = moyennes_par_etat, col = "skyblue", main = "Sulfonic" )
+
+moyennes_par_etat = tapply(data$Albumin.unadducted, data$case, mean)
+barplot(height = moyennes_par_etat, col = "skyblue", main = "Non lié" )
+
+#Histogramme 
+hist(data$Albumin.adduct.of.Nacetylcysteine)
+wilcox.test(data$Albumin.adduct.of.Nacetylcysteine[data$case=="1"],data$Albumin.adduct.of.Nacetylcysteine[data$case=="0"])
+
+hist(data$Albumin.adduct.of.CysGly)
+wilcox.test(data$Albumin.adduct.of.CysGly[data$case=="1"],data$Albumin.adduct.of.CysGly[data$case=="0"])
+
+hist(data$Albumin.adduct.of.sulfonic.acid)
+wilcox.test(data$Albumin.adduct.of.sulfonic.acid[data$case=="1"],data$Albumin.adduct.of.sulfonic.acid[data$case=="0"])
+
+hist(data$Albumin.unadducted)
+wilcox.test(data$Albumin.unadducted[data$case=="1"],data$Albumin.unadducted[data$case=="0"])
+
+
 # Calcul des moyennes et écart-types par état
 moyennes_par_etat <- tapply(df$valeur, df$etat, mean)
 
@@ -68,8 +100,6 @@ bp <- barplot(moyennes_par_etat, col = "skyblue", main = "Moyennes par État", x
 
 # Ajout des barres d'erreur (écart type)
 arrows(bp, moyennes_par_etat, bp, moyennes_par_etat + ecart_types_par_etat, angle = 90, code = 3, length = 0.1, col = "red")
-
-
 
 
 mymodel = glm(data$case ~data$Albumin.adduct.of.Nacetylcysteine)
