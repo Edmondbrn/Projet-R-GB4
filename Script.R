@@ -16,6 +16,17 @@ summary(data$Albumin.adduct.of.sulfonic.acid)
 summary(data$Albumin.unadducted)
 
 
+data[8] == data$Albumin.adduct.of.Nacetylcysteine
+data$Albumin.adduct.of.Nacetylcysteine
+c(data[8])
+
+for (i in seq(8,11)){
+  print(i)
+  print(sd(c(data[i])))
+}
+
+help(sd)
+
 table(data$gender)
 # 120 hommes et 77 femmes, test stat pour voir si différence significative
 
@@ -57,7 +68,8 @@ moyennes_par_etat = tapply(data$Albumin.unadducted, data$smoking_status, mean)
 barplot(height = moyennes_par_etat, col = "skyblue", main = "Non lié" )
 
 kruskal.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
-dunn.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
+dunn.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status, method = "bonferroni")
+help(dunn.test)
 
 # Calcul des moyennes et écart-types par état
 moyennes_par_etat <- tapply(df$valeur, df$etat, mean)
@@ -87,28 +99,26 @@ summary(mymodel4)
 
 
 
+library(ggplot2)
 
+# Exemple de données
+data <- data.frame(
+  smoking_status = c("Non-smoker", "Smoker", "Non-smoker", "Smoker", "Non-smoker")
+)
 
+# Calcul des proportions avec prop.table
+proportion <- prop.table(table(data$smoking_status))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Création du graphique circulaire
+ggplot(NULL, aes(x = "", y = proportion, fill = names(proportion))) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9", "#009E73")) +
+  labs(title = "Diagramme circulaire représentant les proportions de la population\natteinte d'un cancer selon son état tabagique") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm")) +
+  geom_text(aes(label = paste0(round(proportion * 100), "%")), position = position_stack(vjust = 0.5), size = 5)
 
 
 
