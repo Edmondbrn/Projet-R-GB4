@@ -62,9 +62,6 @@ barplot(height = moyennes_par_etat, col = "skyblue", main = "Sulfonic" )
 (moyennes_par_etat = tapply(data$Albumin.unadducted, data$smoking_status, mean))
 barplot(height = moyennes_par_etat, col = "skyblue", main = "Non lié" )
 
-kruskal.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
-dunn.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status, method = "bonferroni")
-help(dunn.test)
 
 
 moyennes_par_etat = tapply(data$Albumin.adduct.of.Nacetylcysteine, data$case, mean)
@@ -110,7 +107,6 @@ summary(mymodel4)
 # Visualisation de la corrélation entre les 4 variables numériques
 test = data.frame(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.CysGly, data$Albumin.unadducted, data$Albumin.adduct.of.sulfonic.acid)
 pairs(test)
-
 
 
 
@@ -164,6 +160,7 @@ ggplot(data3, aes(x=type_albumine,y=albumine, fill=type_albumine)) +
   ylim(c(0,10))
 
 
+
 # Exclusion valeurs aberrantes
 
 # https://delladata.fr/comment-detecter-les-outliers-avec-r/
@@ -172,6 +169,8 @@ ggplot(data3, aes(x=type_albumine,y=albumine, fill=type_albumine)) +
 
 # Filtrer les données
 (albu_CysGly <- data3[data3$type_albumine == "Albumin.adduct.of.CysGly",])
+albu_CysGly2 = albu_CysGly
+
 
 # Calculer les valeurs aberrantes
 # Prend les valeurs supérieures ou inférieurs aux quartiles +-1.5 fois l'écart interquartile
@@ -184,10 +183,26 @@ albu_CysGly$albumine[index_outliers] = NaN
 boxplot(albu_CysGly$albumine)
 
 
+data$smoking_status = as.factor(data$smoking_status)
+albu = c("Albumin.adduct.of.CysGly", "Albumin.adduct.of.Nacetylcysteine", "Albumin.unadducted", "Albumin.adduct.of.sulfonic.acid")
+
+# Dégage les valeurs aberrantes par état tabagique
+for (i in levels(data$smoking_status)){
+  outliers = boxplot.stats(data$Albumin.adduct.of.CysGly[data$smoking_status == i])$out
+  index_outliers = which(data$Albumin.adduct.of.CysGly %in% c(outliers))
+  # Affiche les valeurs détéctées
+  print(i)
+  print(outliers)
+  # Suppression des valeurs aberrantes
+  albu_CysGly2$albumine[index_outliers] = NaN
+}
+boxplot(albu_CysGly2$albumine)
+
 #============================ Nacetyl ===============================
 
 # Filtrer les données
 (albu_Nacetyl <- data3[data3$type_albumine == "Albumin.adduct.of.Nacetylcysteine",])
+albu_Nacetyl2 = albu_Nacetyl
 
 # Calculer les valeurs aberrantes
 # Prend les valeurs supérieures ou inférieurs aux quartiles +-1.5 fois l'écart interquartile
@@ -199,11 +214,23 @@ boxplot(albu_CysGly$albumine)
 albu_Nacetyl$albumine[index_outliers] = NaN
 boxplot(albu_Nacetyl$albumine)
 
+# Dégage les valeurs aberrantes par état tabagique
+for (i in levels(data$smoking_status)){
+  outliers = boxplot.stats(data$Albumin.adduct.of.Nacetylcysteine[data$smoking_status == i])$out
+  index_outliers = which(data$Albumin.adduct.of.Nacetylcysteine %in% c(outliers))
+  # Affiche les valeurs détéctées
+  print(i)
+  print(outliers)
+  # Suppression des valeurs aberrantes
+  albu_Nacetyl2$albumine[index_outliers] = NaN
+}
+boxplot(albu_Nacetyl2$albumine)
 
 #============================ Acide sulfonique ===============================
 
 # Filtrer les données
 (albu_sulfo <- data3[data3$type_albumine == "Albumin.adduct.of.sulfonic.acid",])
+albu_sulfo2 = albu_sulfo
 
 # Calculer les valeurs aberrantes
 # Prend les valeurs supérieures ou inférieurs aux quartiles +-1.5 fois l'écart interquartile
@@ -215,11 +242,24 @@ boxplot(albu_Nacetyl$albumine)
 albu_sulfo$albumine[index_outliers] = NaN
 boxplot(albu_sulfo$albumine)
 
+# Dégage les valeurs aberrantes par état tabagique
+for (i in levels(data$smoking_status)){
+  outliers = boxplot.stats(data$Albumin.adduct.of.sulfonic.acid[data$smoking_status == i])$out
+  index_outliers = which(data$Albumin.adduct.of.sulfonic.acid %in% c(outliers))
+  # Affiche les valeurs détéctées
+  print(i)
+  print(outliers)
+  # Suppression des valeurs aberrantes
+  albu_sulfo2$albumine[index_outliers] = NaN
+}
+boxplot(albu_sulfo2$albumine)
+
 
 #============================ Acide sulfonique ===============================
 
 # Filtrer les données
 (albu_non_undu <- data3[data3$type_albumine == "Albumin.unadducted",])
+albu_non_undu2 = albu_non_undu
 
 # Calculer les valeurs aberrantes
 # Prend les valeurs supérieures ou inférieurs aux quartiles +-1.5 fois l'écart interquartile
@@ -231,16 +271,40 @@ boxplot(albu_sulfo$albumine)
 albu_non_undu$albumine[index_outliers] = NaN
 boxplot(albu_non_undu$albumine)
 
+for (i in levels(data$smoking_status)){
+  outliers = boxplot.stats(data$Albumin.unadducted[data$smoking_status == i])$out
+  index_outliers = which(data$Albumin.unadducted %in% c(outliers))
+  # Affiche les valeurs détéctées
+  print(i)
+  print(outliers)
+  # Suppression des valeurs aberrantes
+  albu_non_undu2$albumine[index_outliers] = NaN
+}
+boxplot(albu_non_undu2$albumine)
+
+
 #============================ Nouveau dataset sans valeur aberrante ===============================
 
 val_albu = c(albu_CysGly$albumine, albu_Nacetyl$albumine, albu_sulfo$albumine, albu_non_undu$albumine)
+val_albu2 = c(albu_CysGly2$albumine, albu_Nacetyl2$albumine, albu_sulfo2$albumine, albu_non_undu2$albumine)
 type_Albumine = c(albu_CysGly$type_albumine, albu_Nacetyl$type_albumine, albu_sulfo$type_albumine, albu_non_undu$type_albumine)
+
 data_corr_graph = data.frame(val_albu, type_Albumine)
-data_corr_graph
+data_corr_graph2 = data.frame(val_albu2, type_Albumine)
+
+data_corr_graph2
 
 library(ggplot2)
 # boxplot général pour voir que c'est mieux
 ggplot(data_corr_graph, aes(x=type_Albumine,y=val_albu, fill=type_Albumine)) +
+  geom_boxplot()+ 
+  xlab(label = "Différents types d'albumines") +
+  ylab(label = "Concentration") +
+  theme(axis.text.x = element_text(angle=30, hjust=1, vjust=1))+
+  theme(legend.position="none")+
+  ggtitle("Boxplot des différentes albumines")
+
+ggplot(data_corr_graph2, aes(x=type_Albumine,y=val_albu2, fill=type_Albumine)) +
   geom_boxplot()+ 
   xlab(label = "Différents types d'albumines") +
   ylab(label = "Concentration") +
@@ -258,6 +322,14 @@ ggplot(data_corr_graph, aes(x=type_Albumine,y=val_albu, fill=type_Albumine)) +
   ggtitle("Boxplot des différentes albumines")+
   ylim(c(0,5))
 
+ggplot(data_corr_graph2, aes(x=type_Albumine,y=val_albu2, fill=type_Albumine)) +
+  geom_boxplot()+ 
+  xlab(label = "Différents types d'albumines") +
+  ylab(label = "Concentration") +
+  theme(axis.text.x = element_text(angle=30, hjust=1, vjust=1))+
+  theme(legend.position="none")+
+  ggtitle("Boxplot des différentes albumines")+
+  ylim(c(0,10))
 
 
 # =============================== Analyse nouveau dataset ===================================
@@ -268,6 +340,10 @@ data$Nacetyl_corr = albu_Nacetyl$albumine
 data$sulfo_corr = albu_sulfo$albumine
 data$unadducted_corr = albu_non_undu$albumine
 
+data$CysGly_corr2 = albu_CysGly2$albumine
+data$Nacetyl_corr2 = albu_Nacetyl2$albumine
+data$sulfo_corr2 = albu_sulfo2$albumine
+data$unadducted_corr2 = albu_non_undu2$albumine
 
 # Corrélation / ACP
 
@@ -379,61 +455,119 @@ chisq.test(table(data$centre, data$smoking_status))
 
 # Test moyenne entre adductomic et cancer
 
+# moyenne CysGly selon état tabagique
 mean(na.omit(data$CysGly_cor[data$smoking_status == "Former"]),)
 mean(na.omit(data$CysGly_cor[data$smoking_status == "Current"]),)
 mean(na.omit(data$CysGly_cor[data$smoking_status == "Never"]),)
 
+mean(na.omit(data$CysGly_corr2[data$smoking_status == "Former"]),)
+mean(na.omit(data$CysGly_corr2[data$smoking_status == "Current"]),)
+mean(na.omit(data$CysGly_corr2[data$smoking_status == "Never"]),)
 
+
+# moyenne acide sulfonique selon état tabagique
 mean(na.omit(data$sulfo_corr[data$smoking_status == "Former"]),)
 mean(na.omit(data$sulfo_corr[data$smoking_status == "Current"]),)
 mean(na.omit(data$sulfo_corr[data$smoking_status == "Never"]),)
 
+mean(na.omit(data$sulfo_corr2[data$smoking_status == "Former"]),)
+mean(na.omit(data$sulfo_corr2[data$smoking_status == "Current"]),)
+mean(na.omit(data$sulfo_corr2[data$smoking_status == "Never"]),)
+
+# moyenne Nacetyl selon état tabagique
 mean(na.omit(data$Nacetyl_corr[data$smoking_status == "Former"]),)
 mean(na.omit(data$Nacetyl_corr[data$smoking_status == "Current"]),)
 mean(na.omit(data$Nacetyl_corr[data$smoking_status == "Never"]),)
 
+mean(na.omit(data$Nacetyl_corr2[data$smoking_status == "Former"]),)
+mean(na.omit(data$Nacetyl_corr2[data$smoking_status == "Current"]),)
+mean(na.omit(data$Nacetyl_corr2[data$smoking_status == "Never"]),)
+
+
+# moyenne non adducté selon état tabagique
 mean(na.omit(data$unadducted_corr[data$smoking_status == "Former"]),)
 mean(na.omit(data$unadducted_corr[data$smoking_status == "Current"]),)
 mean(na.omit(data$unadducted_corr[data$smoking_status == "Never"]),)
 
+mean(na.omit(data$unadducted_corr2[data$smoking_status == "Former"]),)
+mean(na.omit(data$unadducted_corr2[data$smoking_status == "Current"]),)
+mean(na.omit(data$unadducted_corr2[data$smoking_status == "Never"]),)
+
+
+# Les tests
+
+########## CysGly ############
 wilcox.test(data$CysGly_cor[data$case == "0"], data$CysGly_cor[data$case == "1"])
 summary(glm(data$case ~ data$CysGly_cor, family = "binomial"))
+
+wilcox.test(data$CysGly_corr2[data$case == "0"], data$CysGly_corr2[data$case == "1"])
+summary(glm(data$case ~ data$CysGly_corr2, family = "binomial"))
+
 wilcox.test(data$Albumin.adduct.of.CysGly[data$case == "0"], data$Albumin.adduct.of.CysGly[data$case == "1"])
 summary(glm(data$case ~ data$Albumin.adduct.of.CysGly, family = "binomial"))
 
+
+############# Nacetyl ##############
 wilcox.test(data$Nacetyl_corr[data$case == "0"], data$Nacetyl_corr[data$case == "1"])
 summary(glm(data$case ~ data$Nacetyl_corr, family = "binomial"))
+
+wilcox.test(data$Nacetyl_corr2[data$case == "0"], data$Nacetyl_corr2[data$case == "1"])
+summary(glm(data$case ~ data$Nacetyl_corr2, family = "binomial"))
+
 wilcox.test(data$Albumin.adduct.of.Nacetylcysteine[data$case == "0"], data$Albumin.adduct.of.Nacetylcysteine[data$case == "1"])
 summary(glm(data$case ~ data$Albumin.adduct.of.Nacetylcysteine, family = "binomial"))
 
+
+############ Non adductée ###########
 wilcox.test(data$Albumin.unadducted[data$case == "0"], data$Albumin.unadducted[data$case == "1"])
 summary(glm(data$case ~ data$Albumin.unadducted, family = "binomial"))
+
+wilcox.test(data$unadducted_corr2[data$case == "0"], data$unadducted_corr2[data$case == "1"])
+summary(glm(data$case ~ data$unadducted_corr2, family = "binomial"))
+
+
 wilcox.test(data$unadducted_corr[data$case == "0"], data$unadducted_corr[data$case == "1"])
 summary(glm(data$case ~ data$unadducted_corr, family = "binomial"))
 
+
+########### Acide sulfonique ##########
 wilcox.test(data$sulfo_corr[data$case == "0"], data$sulfo_corr[data$case == "1"])
 summary(glm(data$case ~ data$sulfo_corr, family = "binomial"))
+
+wilcox.test(data$sulfo_corr2[data$case == "0"], data$sulfo_corr2[data$case == "1"])
+summary(glm(data$case ~ data$sulfo_corr2, family = "binomial"))
+
 wilcox.test(data$Albumin.adduct.of.sulfonic.acid[data$case == "0"], data$Albumin.adduct.of.sulfonic.acid[data$case == "1"])
 summary(glm(data$case ~ data$Albumin.adduct.of.sulfonic.acid, family = "binomial"))
 
-
+##### TEst kruskall/ Dunn  ####
 kruskal.test(data$CysGly_cor, data$smoking_status)
+kruskal.test(data$CysGly_corr2, data$smoking_status)
 kruskal.test(data$Albumin.adduct.of.CysGly, data$smoking_status)
 
+
 kruskal.test(data$Nacetyl_corr, data$smoking_status)
+kruskal.test(data$Nacetyl_corr2, data$smoking_status)
 kruskal.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status)
+
 dunn.test(data$Nacetyl_corr, data$smoking_status,  method = "bonferroni")
+dunn.test(data$Nacetyl_corr2, data$smoking_status,  method = "bonferroni")
 dunn.test(data$Albumin.adduct.of.Nacetylcysteine, data$smoking_status,  method = "bonferroni")
 
 kruskal.test(data$Albumin.unadducted, data$smoking_status)
 dunn.test(data$Albumin.unadducted, data$smoking_status,  method = "bonferroni")
+
+kruskal.test(data$unadducted_corr2, data$smoking_status)
+dunn.test(data$unadducted_corr2, data$smoking_status,  method = "bonferroni")
+
 kruskal.test(data$unadducted_corr, data$smoking_status)
 dunn.test(data$unadducted_corr, data$smoking_status,  method = "bonferroni")
 
 
 kruskal.test(data$Albumin.adduct.of.sulfonic.acid, data$smoking_status)
 kruskal.test(data$sulfo_corr, data$smoking_status)
-
+kruskal.test(data$sulfo_corr2, data$smoking_status)
+dunn.test(data$sulfo_corr2, data$smoking_status)
 
 help(tapply)
 # Ecart type
@@ -457,6 +591,64 @@ arrows(bp, moyennes_par_etat, bp, moyennes_par_etat + ecart_types_par_etat, angl
 
 
 
+# ========================= RAndom Forest
+data = read.csv("LC-Adductomics.csv")
+data$Code.participants = NULL
+data$centre = NULL
+
+data$Albumin.adduct.of.Nacetylcysteine = NULL
+data$Albumin.unadducted= NULL
+data$Albumin.adduct.of.sulfonic.acid = NULL
+data$Albumin.adduct.of.CysGly = NULL
+
+data$CysGly_corr2 = albu_CysGly2$albumine
+data$Nacetyl_corr2 = albu_Nacetyl2$albumine
+data$sulfo_corr2 = albu_sulfo2$albumine
+data$unadducted_corr2 = albu_non_undu2$albumine
+
+precision = c()
+for (i in seq(1:200)){
+  # Préparation des données 70 apprentissage et 30 de test
+  # Ressort 70% des lignes
+  (train_idx = sample(1:nrow(data), 0.7*nrow(data)))
+  (train_data = data[train_idx,])
+  (test_data = data[-train_idx,])
+  
+  dim(test_data) # 45 données
+  dim(train_data) # 105 données
+  
+  # Prédiction de l'espèce en fonction des autres variables en utilisant 100 arbres
+  (rf_model = randomForest(as.factor(case) ~ ., data = train_data, ntree = 100, na.action = na.omit))
+  help(randomForest)
+  # Predictions des espèces sur les données test
+  (predictions = predict(rf_model, test_data))
+  
+  # Calcul le nombre de bonnes prédictions en %
+  (accuracy = sum(na.omit(predictions) == test_data$case) / nrow(test_data))
+  # 97.8% donc le modèle a une exactitude plus que satisfaisante
+  
+  # Extrait les variables les plus importantes
+  (features_importance = importance(rf_model))
+  
+  (sorted_importance = features_importance[order(-features_importance),])
+  precision = c(precision, accuracy)
+  print(i)
+ # print(sorted_importance)
+  
+}
+print(mean(precision)) # Après 100 tours, précision moyenne de 56%
+  
+barplot(sorted_importance, horiz = F, main = "Importance des Caractéristiques", xlab = "Scored d'importance",
+        cex.names =0.8, las = 1)
+
+(df = as.data.frame(sorted_importance))
+
+ggplot(geom_bar(df))
+
+ggplot(df, aes(x = rownames(df), y = df$sorted_importance , fill = rownames(df))) +
+  geom_bar(stat = "identity")+
+  theme_minimal()
+  #labs(x = "Réaction", y = "Valeur", fill = "Traitement")
 
 
 
