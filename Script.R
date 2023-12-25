@@ -756,3 +756,4 @@ ggplot(data_corr_graph2[data_corr_graph2$type_Albumine == "Albumin.unadducted", 
        title = "Boxplot pour Albumin.unadducted") +
   theme(axis.text.x = element_text(angle = 30, hjust = 1),
         legend.position = "none")
+#
