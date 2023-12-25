@@ -9,8 +9,6 @@ data
 View(data)
 
 
-
-
 # Partie 1
 dim(data)
 summary(data)
@@ -20,7 +18,6 @@ summary(data$Albumin.adduct.of.CysGly)
 summary(data$Albumin.adduct.of.Nacetylcysteine)
 summary(data$Albumin.adduct.of.sulfonic.acid)
 summary(data$Albumin.unadducted)
-
 
 table(data$gender)
 # 120 hommes et 77 femmes, test stat pour voir si différence significative
@@ -63,7 +60,6 @@ barplot(height = moyennes_par_etat, col = "skyblue", main = "Sulfonic" )
 barplot(height = moyennes_par_etat, col = "skyblue", main = "Non lié" )
 
 
-
 moyennes_par_etat = tapply(data$Albumin.adduct.of.Nacetylcysteine, data$case, mean)
 barplot(height = moyennes_par_etat, col = "skyblue", main = "Nacetylcystéine" )
 
@@ -102,13 +98,9 @@ summary(mymodel3)
 mymodel4 = glm(data$case ~ data$smoking_status)
 summary(mymodel4)
 
-
-
 # Visualisation de la corrélation entre les 4 variables numériques
 test = data.frame(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.CysGly, data$Albumin.unadducted, data$Albumin.adduct.of.sulfonic.acid)
 pairs(test)
-
-
 
 # Calcul des proportions avec prop.table
 (proportion <- prop.table(table(data$smoking_status)))
@@ -159,8 +151,6 @@ ggplot(data3, aes(x=type_albumine,y=albumine, fill=type_albumine)) +
   ggtitle("Boxplot des différentes albumines")+
   ylim(c(0,10))
 
-
-
 # Exclusion valeurs aberrantes
 
 # https://delladata.fr/comment-detecter-les-outliers-avec-r/
@@ -170,7 +160,6 @@ ggplot(data3, aes(x=type_albumine,y=albumine, fill=type_albumine)) +
 # Filtrer les données
 (albu_CysGly <- data3[data3$type_albumine == "Albumin.adduct.of.CysGly",])
 albu_CysGly2 = albu_CysGly
-
 
 # Calculer les valeurs aberrantes
 # Prend les valeurs supérieures ou inférieurs aux quartiles +-1.5 fois l'écart interquartile
@@ -254,7 +243,6 @@ for (i in levels(data$smoking_status)){
 }
 boxplot(albu_sulfo2$albumine)
 
-
 #============================ Acide sulfonique ===============================
 
 # Filtrer les données
@@ -281,7 +269,6 @@ for (i in levels(data$smoking_status)){
   albu_non_undu2$albumine[index_outliers] = NaN
 }
 boxplot(albu_non_undu2$albumine)
-
 
 #============================ Nouveau dataset sans valeur aberrante ===============================
 
@@ -331,7 +318,6 @@ ggplot(data_corr_graph2, aes(x=type_Albumine,y=val_albu2, fill=type_Albumine)) +
   ggtitle("Boxplot des différentes albumines")+
   ylim(c(0,10))
 
-
 # =============================== Analyse nouveau dataset ===================================
 
 # Implémantation dans le tableau à l'origine
@@ -347,11 +333,9 @@ data$unadducted_corr2 = albu_non_undu2$albumine
 
 # Corrélation / ACP
 
-
 (X = data[12:15])
 (X2 = data[8:11])
 (Y = data[, 7])
-
 
 PCA = prcomp(na.omit(X))
 PCA2 = prcomp(X2)
@@ -365,7 +349,6 @@ plot(cum_ev,
 )
 
 
-
 (mypal <- brewer.pal(n = length(unique(Y)), name = "Paired"))
 (mycolors <- mypal[as.numeric(as.factor(Y))])
 
@@ -375,7 +358,6 @@ plot(PCA2$x[, 1:2],
      ylab = substitute(PC[2] * " (" * a * "% e.v.)", list(a = round(ev[2] * 100, digits = 2)))
 )
 legend("topright", pch = 19, col = mypal, legend = levels(as.factor(Y)), pt.cex = 1, cex = 1.2)
-
 
 par(mfrow = c(1, 1))
 mycor <- cor(na.omit(X), PCA$x[, 1:2])
@@ -395,7 +377,6 @@ lines(xseq, sqrt(1 - xseq^2))
 lines(xseq, -sqrt(1 - xseq^2))
 text(mycor[, 1] + sign(mycor[, 1]) * 0.25, mycor[, 2] + 0.1, labels = colnames(X), cex = 1.2, col = "navy")
 
-
 # Coorélation test
 pairs(data.frame(data$CysGly_cor, data$unadducted_corr, data$sulfo_corr, data$Nacetyl_corr))
 plot(data$CysGly_cor, data$unadducted_corr)
@@ -410,17 +391,14 @@ cor.test(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.sulfonic
 cor.test(data$Nacetyl_corr, data$unadducted_corr, method = "spearman") #p = 0.02825
 cor.test(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.unadducted, method = "spearman")
 
-
 cor.test(data$CysGly_cor, data$sulfo_corr, method = "spearman") # 0.097
 cor.test(data$Albumin.adduct.of.CysGly, data$Albumin.adduct.of.sulfonic.acid, method = "spearman") # 0.047
 
 cor.test(data$CysGly_cor, data$unadducted_corr, method = "spearman") # 2.236e-09
 cor.test(data$Albumin.adduct.of.CysGly, data$Albumin.unadducted, method = "spearman")
 
-
 cor.test(data$unadducted_corr, data$sulfo_corr, method = "spearman")# 0.1271
 cor.test(data$Albumin.unadducted, data$Albumin.adduct.of.sulfonic.acid, method = "spearman") #0.006
-
 
 
 for (i in seq(12,15)){
@@ -438,8 +416,6 @@ for (i in seq(12,15)){
   qqnorm(mymodel$residuals)
 }
 # modèle de régression linéaire non valide, car pas de normalité des résidus
-
-
 
 # test de dépendance
 
@@ -578,19 +554,6 @@ bp = barplot(height = moyennes_par_etat, col = "skyblue", main = "CysGly", ylim 
 arrows(bp, moyennes_par_etat, bp, moyennes_par_etat + ecart_types_par_etat, angle = 90, code = 3, length = 0.1, col = "black")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ========================= RAndom Forest
 data = read.csv("LC-Adductomics.csv")
 data$Code.participants = NULL
@@ -650,12 +613,146 @@ ggplot(df, aes(x = rownames(df), y = df$sorted_importance , fill = rownames(df))
   theme_minimal()
   #labs(x = "Réaction", y = "Valeur", fill = "Traitement")
 
+......................................................
+
+#association entre bmi et risque de cancer :
+mymodelA = lm(data$bmi ~ data$case)
+summary(mymodelA)
+#-> pas d'association entre le l'imc et le risque d'avoir un cancer
+
+#association entre bmi et la modification des differents albumines :
+
+mymodelB = lm(data$bmi ~ data$Albumin.adduct.of.CysGly)
+summary(mymodelB)
+#-> Pas d'associatation entre l'imc et le fait d'avoir de l'albumine avec la Cys-Gly
+
+mymodelC = lm(data$bmi ~ data$Albumin.adduct.of.sulfonic.acid)
+summary(mymodelC)
+#-> // acide sulfonique
+
+mymodelD = lm(data$bmi ~ data$Albumin.adduct.of.Nacetylcysteine)
+summary(mymodelD)
+#-> // N-acetylcysteine
+
+mymodelE = lm(data$bmi ~ data$Albumin.unadducted)
+summary(mymodelE)
+#-> // non adduite (= non modifié)
 
 
+#Box plot de la modif de l'albumine en f° du statut fumeur (avant suppression valeurs abbérantes)
+#albumine avec N-acetylcysteine en f° du statut fumeur 
+ggplot(data, aes(x = smoking_status, y = Albumin.adduct.of.Nacetylcysteine, fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (avant suppression valeurs abbérantes)", 
+       x = "Statut fumeur", 
+       y = "Albumine avec N-acetylcysteine") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine avec CysGly //
+ggplot(data, aes(x = smoking_status, y = Albumin.adduct.of.CysGly, fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (avant suppression valeurs abbérantes)", 
+       x = "Statut fumeur", 
+       y = "Albumine avec Cysteine-Glycine") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine avec acide sulfonique //
+ggplot(data, aes(x = smoking_status, y = Albumin.adduct.of.sulfonic.acid, fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (avant suppression valeurs abbérantes)", 
+       x = "Statut fumeur", 
+       y = "Albumine avec l'acide sulfonique") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine non modifié //
+ggplot(data, aes(x = smoking_status, y = Albumin.unadducted, fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de l'albumine non modifié en fonction du statut fumeur (avant suppression valeurs abbérantes)", 
+       x = "Statut fumeur", 
+       y = "Albumine non modifié") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
 
 
+#Box plot de la modif de l'albumine en f° du statut fumeur (après suppression valeurs abbérantes)
+#albumine avec N-acetylcysteine en f° du statut fumeur 
+ggplot(data, aes(x = smoking_status, y = Nacetyl_corr , fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (après suppresion valeurs abbérantes", 
+       x = "Statut fumeur", 
+       y = "Albumine avec N-acetylcysteine") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine avec CysGly //
+ggplot(data, aes(x = smoking_status, y = CysGly_cor , fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (après suppresion valeurs abbérantes", 
+       x = "Statut fumeur", 
+       y = "Albumine avec Cysteine-Glycine") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine avec acide sulfonique //
+ggplot(data, aes(x = smoking_status, y = sulfo_corr , fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (après suppresion valeurs abbérantes", 
+       x = "Statut fumeur", 
+       y = "Albumine avec l'acide sulfonique") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
+
+#albumine non modifié //
+ggplot(data, aes(x = smoking_status, y = unadducted_corr , fill = smoking_status)) +
+  geom_boxplot(alpha = 0.3) + 
+  labs(title = "Boxplot de la modification de l'albumine en fonction du statut fumeur (après suppresion valeurs abbérantes", 
+       x = "Statut fumeur", 
+       y = "Albumine non modifié") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 14)) +  
+  theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
 
 
+#affichage de chaque boxplot séparément pour les diff modifs de l'albumine (dataset : data_corr_graph) après suppression variables abbérantes
 
+#Pour Albumin.adduct.of.Nacetylcysteine :
+ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.Nacetylcysteine", ], 
+       aes(x = type_Albumine, y = val_albu)) +
+  geom_boxplot(fill = "blue") + 
+  labs(x = "Albumin.adduct.of.Nacetylcysteine", 
+       y = "Concentration", 
+       title = "Boxplot pour Albumin.adduct.of.Nacetylcysteine") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "none")
 
+#Pour Albumin.adduct.of.CysGly :
+ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.CysGly", ], 
+       aes(x = type_Albumine, y = val_albu)) +
+  geom_boxplot(fill = "green") + 
+  labs(x = "Albumin.adduct.of.CysGly", 
+       y = "Concentration", 
+       title = "Boxplot pour Albumin.adduct.of.CysGly") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "none")
 
+#Pour Albumin.adduct.of.sulfonic.acid :
+ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.sulfonic.acid", ], 
+       aes(x = type_Albumine, y = val_albu)) +
+  geom_boxplot(fill = "red") + 
+  labs(x = "Albumin.adduct.of.sulfonic.acid", 
+       y = "Concentration", 
+       title = "Boxplot pour Albumin.adduct.of.sulfonic.acid") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "none")
+
+#Pour Albumin.unadducted :
+ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.unadducted", ], 
+       aes(x = type_Albumine, y = val_albu)) +
+  geom_boxplot(fill = "purple") + 
+  labs(x = "Albumin.unadducted", 
+       y = "Concentration", 
+       title = "Boxplot pour Albumin.unadducted") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "none")
