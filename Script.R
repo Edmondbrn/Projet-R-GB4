@@ -715,11 +715,11 @@ ggplot(data, aes(x = smoking_status, y = unadducted_corr , fill = smoking_status
   theme(plot.margin = unit(c(1, 0.5, 1, 1), "cm"))
 
 
-#affichage de chaque boxplot séparément pour les diff modifs de l'albumine (dataset : data_corr_graph) après suppression variables abbérantes
+#affichage de chaque boxplot séparément pour les diff modifs de l'albumine (dataset : data_corr_graph2) après suppression variables abbérantes
 
 #Pour Albumin.adduct.of.Nacetylcysteine :
-ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.Nacetylcysteine", ], 
-       aes(x = type_Albumine, y = val_albu)) +
+ggplot(data_corr_graph2[data_corr_graph2$type_Albumine == "Albumin.adduct.of.Nacetylcysteine", ], 
+       aes(x = type_Albumine, y = val_albu2)) +
   geom_boxplot(fill = "blue") + 
   labs(x = "Albumin.adduct.of.Nacetylcysteine", 
        y = "Concentration", 
@@ -728,8 +728,8 @@ ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.Nacet
         legend.position = "none")
 
 #Pour Albumin.adduct.of.CysGly :
-ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.CysGly", ], 
-       aes(x = type_Albumine, y = val_albu)) +
+ggplot(data_corr_graph2[data_corr_graph2$type_Albumine == "Albumin.adduct.of.CysGly", ], 
+       aes(x = type_Albumine, y = val_albu2)) +
   geom_boxplot(fill = "green") + 
   labs(x = "Albumin.adduct.of.CysGly", 
        y = "Concentration", 
@@ -738,8 +738,8 @@ ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.CysGl
         legend.position = "none")
 
 #Pour Albumin.adduct.of.sulfonic.acid :
-ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.sulfonic.acid", ], 
-       aes(x = type_Albumine, y = val_albu)) +
+ggplot(data_corr_graph2[data_corr_graph2$type_Albumine == "Albumin.adduct.of.sulfonic.acid", ], 
+       aes(x = type_Albumine, y = val_albu2)) +
   geom_boxplot(fill = "red") + 
   labs(x = "Albumin.adduct.of.sulfonic.acid", 
        y = "Concentration", 
@@ -748,8 +748,8 @@ ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.adduct.of.sulfo
         legend.position = "none")
 
 #Pour Albumin.unadducted :
-ggplot(data_corr_graph[data_corr_graph$type_Albumine == "Albumin.unadducted", ], 
-       aes(x = type_Albumine, y = val_albu)) +
+ggplot(data_corr_graph2[data_corr_graph2$type_Albumine == "Albumin.unadducted", ], 
+       aes(x = type_Albumine, y = val_albu2)) +
   geom_boxplot(fill = "purple") + 
   labs(x = "Albumin.unadducted", 
        y = "Concentration", 
