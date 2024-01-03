@@ -3,7 +3,7 @@
 #==========================================================================================================
 
 getwd()
-setwd("C:/Users/Edmond/OneDrive - Université Côte d'Azur/Documents/Cours/Cours Polytech/GB4/S1/Stat/Projet-R-GB4")
+setwd("C:/Users/auror/OneDrive - Université Nice Sophia Antipolis/Documents/GitHub/Projet-R-GB4")
 data = read.csv("LC-Adductomics.csv")
 data
 View(data)
@@ -101,6 +101,14 @@ summary(mymodel4)
 # Visualisation de la corrélation entre les 4 variables numériques
 test = data.frame(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.CysGly, data$Albumin.unadducted, data$Albumin.adduct.of.sulfonic.acid)
 pairs(test)
+
+library(ggcorrplot)
+matrice_corr = cor(test)
+ggcorrplot(matrice_corr)
+
+install.packages("GGally")
+library(GGally)
+ggpairs(data.frame(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.CysGly, data$Albumin.unadducted, data$Albumin.adduct.of.sulfonic.acid))
 
 # Calcul des proportions avec prop.table
 (proportion <- prop.table(table(data$smoking_status)))
@@ -381,6 +389,8 @@ text(mycor[, 1] + sign(mycor[, 1]) * 0.25, mycor[, 2] + 0.1, labels = colnames(X
 pairs(data.frame(data$CysGly_cor, data$unadducted_corr, data$sulfo_corr, data$Nacetyl_corr))
 plot(data$CysGly_cor, data$unadducted_corr)
 
+ggpairs(data.frame(data$CysGly_cor, data$unadducted_corr, data$sulfo_corr, data$Nacetyl_corr))
+
 help(cor.test) #spearman cra ne suit pas loi normale
 cor.test(data$Nacetyl_corr, data$CysGly_cor, method = "spearman" ) # p value =  3.979e-11
 cor.test(data$Albumin.adduct.of.Nacetylcysteine, data$Albumin.adduct.of.CysGly, method = "spearman")
@@ -492,6 +502,16 @@ summary(glm(data$case ~ data$Nacetyl_corr2, family = "binomial"))
 
 wilcox.test(data$Albumin.adduct.of.Nacetylcysteine[data$case == "0"], data$Albumin.adduct.of.Nacetylcysteine[data$case == "1"])
 summary(glm(data$case ~ data$Albumin.adduct.of.Nacetylcysteine, family = "binomial"))
+
+moyennes = c(mean(na.omit(data$unadducted_corr[data$smoking_status == "Former"]),), mean(na.omit(data$unadducted_corr[data$smoking_status == "Current"]),), mean(na.omit(data$unadducted_corr[data$smoking_status == "Never"]),))
+groupes = c("Former", "Current", "Never")
+donnees = data.frame(Groupe = groupes, Moyenne = moyennes)
+(moyennes_statut = tapply(data$Nacetyl_corr2, data$smoking_status, mean))
+ecart_types <- tapply(data$Nacetyl_corr2, data$smoking_status, sd)
+barplot(donnees$Moyenne, names.arg = donnees$Groupe, col = "skyblue",
+        main = "Barplot des adduits N-acetyl",
+        ylab = "Moyenne")
+arrows(bp, moyennes_statut, bp, moyennes_statut + ecart_types_par_etat, angle = 90, code = 3, length = 0.1, col = "black")
 
 
 ############ Non adductée ###########
