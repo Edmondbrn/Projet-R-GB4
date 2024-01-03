@@ -637,8 +637,9 @@ summary(mymodelD)
 mymodelE = lm(data$bmi ~ data$Albumin.unadducted)
 summary(mymodelE)
 #-> // non adduite (= non modifié)
+plot(data$bmi, data$Albumin.adduct.of.Nacetylcysteine)
 
-
+library(ggplot2)
 #Box plot de la modif de l'albumine en f° du statut fumeur (avant suppression valeurs abbérantes)
 #albumine avec N-acetylcysteine en f° du statut fumeur 
 ggplot(data, aes(x = smoking_status, y = Albumin.adduct.of.Nacetylcysteine, fill = smoking_status)) +
